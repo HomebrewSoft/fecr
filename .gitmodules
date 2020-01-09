@@ -1,0 +1,4 @@
+[submodule "lfelipecr/xalachi-fecr"]
+	path = lfelipecr/xalachi-fecr
+	url = git@github.com:lfelipecr/xalachi-fecr.git
+	branch = 12.0
