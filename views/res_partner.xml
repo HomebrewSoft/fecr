@@ -8,6 +8,9 @@
             <field name="vat" position="before">
                 <field name="identification_type" />
             </field>
+            <field name="vat" position="attributes">
+                <attribute name="required">1</attribute>
+            </field>
             <field name="state_id" position="after">
                 <field name="county_id" domain="[('state_id', '=', state_id)]" class="o_address_state" placeholder="County" options="{'no_open': 1,'no_create': 1, 'no_create_edit': 1}" />
                 <field name="district_id" domain="[('county_id', '=', county_id)]" class="o_address_state" placeholder="District" options="{'no_open': 1,'no_create': 1, 'no_create_edit': 1}" />

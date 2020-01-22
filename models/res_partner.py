@@ -30,5 +30,4 @@ class ResPartner(models.Model):
     invoices_email = fields.Char(
     )
     vat = fields.Char(
-        required=True,
     )
