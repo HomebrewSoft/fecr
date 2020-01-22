@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from . import uom_uom
 from . import res_company
 from . import electronic_invoice
 from . import basic_code_desc_model

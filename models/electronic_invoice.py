@@ -172,8 +172,8 @@ class ElectronicInvoice(models.AbstractModel):
                 'Codigo': [line.product_id.default_code],
                 # 'PartidaArancelaria': ,  # TODO?
                 'Cantidad': line.quantity,
-                'UnidadMedida': line.product_id.uom_id.id,  # TODO code
-                'UnidadMedidaComercial': line.product_id.uom_id.id,  # TODO code
+                'UnidadMedida': line.product_id.uom_id.code,
+                'UnidadMedidaComercial': line.product_id.uom_id.code,
                 'Detalle': line.product_id.name,
                 'PrecioUnitario': line.price_unit,
                 # 'Descuento': ,

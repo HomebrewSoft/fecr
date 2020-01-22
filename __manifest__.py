@@ -1,12 +1,13 @@
 # coding: utf-8
 {
     'name': 'Costa Rica Electronic Invoice',
-    'version': '0.1.0',
+    'version': '1.0.0',
     'author': 'Navarro Moisés',
     'website': 'https://github.com/lfelipecr/xalachi-fecr',
     'category': 'Localization',
     'depends': [
         'l10n_cr',
+        'uom',
     ],
     'data': [
         # security
@@ -17,11 +18,13 @@
         'data/res.country.county.csv',
         'data/res.country.district.csv',
         'data/res.country.neighborhood.csv',
+        'data/uom_uom.xml',
         # views
         'views/account_invoice.xml',
         'views/account_tax.xml',
         'views/res_company.xml',
         'views/res_partner.xml',
+        'views/uom_uom.xml',
     ],
     'external_dependencies': {
         'python': [
