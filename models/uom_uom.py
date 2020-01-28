@@ -4,5 +4,7 @@ from odoo import models, fields, api, _
 
 class UoMUoM(models.Model):
     _inherit = "uom.uom"
-    code = fields.Char(
+    symbol = fields.Char(
+    )
+    code = fields.Integer(
     )
