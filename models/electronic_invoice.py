@@ -2,8 +2,10 @@
 import http.client
 import json
 import logging
+from datetime import datetime
 
 from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -26,8 +28,8 @@ class ElectronicInvoice(models.AbstractModel):
         default=lambda self: self.env['res.company']._company_default_get('account.invoice').default_activity_id,
         required=True,
     )
-    emission_date = fields.Date(
-        required=True,
+    emission_date = fields.Datetime(
+        readonly=True,
     )
     sale_condition = fields.Selection(
         required=True,
@@ -66,6 +68,10 @@ class ElectronicInvoice(models.AbstractModel):
         copy=False,
         readonly=True,
         string='XML'
+    )
+    electronic_invoice_pdf = fields.Char(
+        copy=False,
+        readonly=True,
     )
     fname_electronic_invoice_xml = fields.Char(
         compute='_get_fname_electronic_invoice_xml'
@@ -135,10 +141,11 @@ class ElectronicInvoice(models.AbstractModel):
             # 'NumeroConsecutivo': 0,
             # 'Clave': 0,
             # 'SecuenciaDocumento': 0,
-            'Sucursal': 1,  # TODO Check
-            'Terminal': 1,  # TODO Check
+            'Sucursal': self.company_id.ei_sucursal,  # TODO Config
+            'Terminal': self.company_id.ei_terminal,  # TODO Config
+            'SituacionEnvio': self.company_id.ei_transmition_situation,  # TODO Config
             'CodigoActividad': self.activity_id.code,
-            'FechaEmision': fields.Date.to_string(self.emission_date),
+            'FechaEmision': datetime.strftime(fields.Datetime.context_timestamp(self, self.emission_date), "%Y-%m-%dT%H:%M:%S"),
             'Receptor': {
                 'Nombre': self.partner_id.name,
                 'IdentificacionTipo': self.partner_id.identification_type,
@@ -166,7 +173,7 @@ class ElectronicInvoice(models.AbstractModel):
     def _get_details(self):
         details = []
         for line in self.invoice_line_ids:
-            taxes = sum(line.invoice_line_tax_ids.mapped('amount'))
+            taxes = sum(line.invoice_line_tax_ids.mapped('amount')) / 100
             details.append({
                 'EsServicio': 'S' if line.product_id.type == 'service' else 'N',
                 'Codigo': [line.product_id.default_code],
@@ -179,7 +186,7 @@ class ElectronicInvoice(models.AbstractModel):
                 # 'Descuento': ,
                 'DescuentoUnitario': line.discount * line.price_unit,
                 # 'BaseImponible': ,
-                'BaseImponibleUnitario': taxes * line.price_unit,
+                # 'BaseImponibleUnitario': taxes * line.price_unit,
                 'Impuestos': [{
                     'Codigo': tax.code,
                     'CodigoTarifa': tax.rate_code,
@@ -200,6 +207,7 @@ class ElectronicInvoice(models.AbstractModel):
     @api.multi
     def send_json(self):
         # TODO checks
+        self.emission_date = fields.Datetime.now()
         conn = http.client.HTTPSConnection(self.company_id.ei_url_api)
         body = {
             'CodigoCliente': self.company_id.ei_id_user,
@@ -233,6 +241,7 @@ class ElectronicInvoice(models.AbstractModel):
                 _logger.info('Response {}'.format(response['Id']))
                 self.sequence = response['NumeroConsecutivo']
                 self.key = response['Clave']
+                self.ei_message = _('Document received, waiting for query.')
                 self.action_invoice_open()
             return response
 
@@ -254,10 +263,15 @@ class ElectronicInvoice(models.AbstractModel):
         self.ei_message = response['Mensaje']
         self.ei_date = response['Fecha']
         if self.ei_response_code == '1':
-            _logger.info('Response {}'.format(response['Id']))
-            self.ei_status_code = response['CodigoEstado']
-            self.ei_status_desc = response['DescripcionEstado']
-            self.ei_message_response = response['MensajeRespuesta']
-            self.electronic_invoice_xml_signed = response['XMLFirmado']
-            self.electronic_invoice_xml = response['XMLRespuesta']
+            try:
+                _logger.info('Response {}'.format(response['Id']))
+                self.ei_status_code = response['CodigoEstado']
+                if self.ei_status_code == '4':
+                    self.electronic_invoice_pdf = 'http://factura.apifecr.com//{}.pdf'.format(self.key)
+                self.ei_status_desc = response['DescripcionEstado']
+                self.ei_message_response = response['MensajeRespuesta']
+                self.electronic_invoice_xml_signed = response['XMLFirmado']
+                self.electronic_invoice_xml = response['XMLRespuesta']
+            except KeyError:
+                raise ValidationError(_('No answer from the API.'))
         return response

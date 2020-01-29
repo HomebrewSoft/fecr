@@ -3,26 +3,26 @@
     <record id="invoice_inherited_form" model="ir.ui.view">
         <field name="name">account.invoice.inherited.form</field>
         <field name="model">account.invoice</field>
-        <field name="inherit_id" ref="account.invoice_form" />
+        <field name="inherit_id" ref="account.invoice_form"/>
         <field name="arch" type="xml">
             <button name="action_invoice_open" position="after">
-                <field name="ei_response_code" invisible="1" />
-                <field name="ei_status_code" invisible="1" />
-                <button name="send_json" string="Send JSON" type="object" class="oe_highlight" attrs="{'invisible': [('ei_response_code','=','1')]}" />
-                <button name="query" string="Query" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('ei_status_code','=','4'), ('ei_response_code','!=','1')]}" />
+                <field name="ei_response_code" invisible="1"/>
+                <field name="ei_status_code" invisible="1"/>
+                <button name="send_json" string="Send JSON" type="object" class="oe_highlight" attrs="{'invisible': [('ei_response_code','=','1')]}"/>
+                <button name="query" string="Query" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('ei_status_code','=','4'), ('ei_response_code','!=','1')]}"/>
             </button>
             <button name="action_invoice_open" position="attributes">
                 <attribute name="invisible">1</attribute>
             </button>
             <field name="partner_id" position="after">
-                <field name="doc_type" />
-                <field name="sale_condition" />
-                <field name="payment_method" />
+                <field name="doc_type"/>
+                <field name="sale_condition"/>
+                <field name="payment_method"/>
                 <field name="available_activity_ids" invisible="1"/>
-                <field name="activity_id" domain="[('id', 'in', available_activity_ids)]" />
+                <field name="activity_id" domain="[('id', 'in', available_activity_ids)]"/>
             </field>
             <field name="date_invoice" position="after">
-                <field name="emission_date" />
+                <field name="emission_date"/>
             </field>
             <field name="payment_term_id" position="attributes">
                 <attribute name="required">1</attribute>
@@ -30,22 +30,23 @@
             <notebook position="inside">
                 <page string="Electronic Invoice">
                     <group>
-                        <field name="sequence" />
-                        <field name="key" />
+                        <field name="sequence"/>
+                        <field name="key"/>
                     </group>
                     <group>
-                        <field name="ei_response_code" />
-                        <field name="ei_message" />
-                        <field name="ei_date" />
+                        <field name="ei_response_code"/>
+                        <field name="ei_message"/>
+                        <field name="ei_date"/>
                     </group>
                     <group>
-                        <field name="ei_status_code" />
-                        <field name="ei_status_desc" />
-                        <field name="ei_message_response" />
-                        <field name="fname_electronic_invoice_xml_signed" invisible="1" />
-                        <field name="fname_electronic_invoice_xml" invisible="1" />
-                        <field name="electronic_invoice_xml_signed" filename="fname_electronic_invoice_xml_signed" />
-                        <field name="electronic_invoice_xml" filename="fname_electronic_invoice_xml" />
+                        <field name="ei_status_code"/>
+                        <field name="ei_status_desc"/>
+                        <field name="ei_message_response"/>
+                        <field name="fname_electronic_invoice_xml_signed" invisible="1"/>
+                        <field name="fname_electronic_invoice_xml" invisible="1"/>
+                        <field name="electronic_invoice_xml_signed" filename="fname_electronic_invoice_xml_signed"/>
+                        <field name="electronic_invoice_xml" filename="fname_electronic_invoice_xml"/>
+                        <field name="electronic_invoice_pdf" widget="url"/>
                     </group>
                 </page>
             </notebook>

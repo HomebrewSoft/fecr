@@ -33,7 +33,18 @@ class ResCompany(models.Model):
         required=True,
         string='Id User'
     )
-
+    ei_sucursal = fields.Integer(
+        required=True,
+        string='Sucursal',
+    )
+    ei_terminal = fields.Integer(
+        required=True,
+        string='Terminal',
+    )
+    ei_transmition_situation = fields.Integer(
+        required=True,
+        string='Transmition Situation',
+    )
     default_activity_id = fields.Many2one(
         comodel_name='res.company.activity',
         ondelete='restrict',

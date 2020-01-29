@@ -3,22 +3,27 @@
     <record id="view_company_inherited_form" model="ir.ui.view">
         <field name="name">res.company.inherited.form</field>
         <field name="model">res.company</field>
-        <field name="inherit_id" ref="base.view_company_form" />
+        <field name="inherit_id" ref="base.view_company_form"/>
         <field name="arch" type="xml">
             <notebook position="inside">
                 <page string="Electronic Invoice">
                     <group>
-                        <field name="ei_url_api" widget="url" />
-                        <field name="ei_service_document_register" widget="url" />
-                        <field name="ei_service_document_query" widget="url" />
-                        <field name="ei_service_message_register" widget="url" />
-                        <field name="ei_user" />
-                        <field name="ei_password" password="1" />
-                        <field name="ei_id_user" />
+                        <field name="ei_url_api" widget="url"/>
+                        <field name="ei_service_document_register" widget="url"/>
+                        <field name="ei_service_document_query" widget="url"/>
+                        <field name="ei_service_message_register" widget="url"/>
+                        <field name="ei_user"/>
+                        <field name="ei_password" password="1"/>
+                        <field name="ei_id_user"/>
+                    </group>
+                    <group col="6">
+                        <field name="ei_sucursal"/>
+                        <field name="ei_terminal"/>
+                        <field name="ei_transmition_situation"/>
                     </group>
                     <group>
-                        <field name="activity_ids" widget="many2many_tags" />
-                        <field name="default_activity_id" domain="[('id', 'in', activity_ids)]" />
+                        <field name="activity_ids" widget="many2many_tags"/>
+                        <field name="default_activity_id" domain="[('id', 'in', activity_ids)]"/>
                     </group>
                 </page>
             </notebook>
