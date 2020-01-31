@@ -11,6 +11,7 @@ class ResCompanyActivity(models.Model):
     )
     code = fields.Char(
         required=True,
+        index=True,
     )
     description = fields.Char(
     )
