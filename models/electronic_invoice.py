@@ -137,6 +137,15 @@ class ElectronicInvoice(models.AbstractModel):
         copy=False,
         string='XML Supplier',
     )
+    ei_state = fields.Selection(
+        [
+            ('to_send', 'To Send'),
+            ('to_query', 'To Query'),
+            ('queried', 'Queried'),
+        ],
+        default='to_send',
+        readonly=True,
+    )
 
     @api.depends('number', 'electronic_invoice_xml')
     def _get_fname_electronic_invoice_xml(self):
@@ -219,6 +228,7 @@ class ElectronicInvoice(models.AbstractModel):
         return details
 
     def _get_doc(self):
+        self.emission_date = fields.Datetime.now()
         doc = {
             'Encabezado': self._get_header(),
             'LineasDetalle': self._get_details(),
@@ -226,7 +236,7 @@ class ElectronicInvoice(models.AbstractModel):
         }
         return doc
 
-    def _send_document_register(self):
+    def send_document_register(self):
         if self._send_json({
             'DocElectronicos': [
                 self._get_doc(),
@@ -236,7 +246,6 @@ class ElectronicInvoice(models.AbstractModel):
 
     def _send_json(self, body, api):
         # TODO checks
-        self.emission_date = fields.Datetime.now()
         conn = http.client.HTTPSConnection(self.company_id.ei_url_api)
         body['CodigoCliente'] = self.company_id.ei_id_user
         headers = {
@@ -265,6 +274,7 @@ class ElectronicInvoice(models.AbstractModel):
                 _logger.info('Response {}'.format(response['Id']))
                 self.sequence = response['NumeroConsecutivo']
                 self.key = response['Clave']
+                self.ei_state = 'to_query'
                 self.ei_message = _('Document received, waiting for query.')
             return self.ei_response_code == '1'
 
@@ -290,7 +300,8 @@ class ElectronicInvoice(models.AbstractModel):
                 _logger.info('Response {}'.format(response['Id']))
                 self.ei_status_code = response['CodigoEstado']
                 if self.ei_status_code == '4':
-                    self.electronic_invoice_pdf = 'http:#factura.apifecr.com#{}.pdf'.format(self.key)
+                    self.ei_state = 'queried'
+                    self.electronic_invoice_pdf = 'http://factura.apifecr.com#{}.pdf'.format(self.key)
                 self.ei_status_desc = response['DescripcionEstado']
                 self.ei_message_response = response['MensajeRespuesta']
                 self.electronic_invoice_xml_signed = response['XMLFirmado']

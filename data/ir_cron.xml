@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <record id="ir_cron_query_invoices" model="ir.cron">
+        <field name="name">Consulta Hacienda</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="doall" eval="False"/>
+        <field name="active" eval="True"/>
+        <field name="model_id" ref="model_account_invoice"/>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="state">code</field>
+        <field name="code">for r in model.search([('ei_state', '=', 'to_query')]):
+  r.query()
+        </field>
+    </record>
+</odoo>

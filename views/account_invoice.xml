@@ -8,8 +8,9 @@
             <button name="action_invoice_open" position="after">
                 <field name="ei_response_code" invisible="1"/>
                 <field name="ei_status_code" invisible="1"/>
-                <button name="send_document_register" string="Send JSON" type="object" class="oe_highlight" attrs="{'invisible': [('ei_response_code','=','1')]}"/>
-                <button name="query" string="Query" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('ei_status_code','=','4'), ('ei_response_code','!=','1')]}"/>
+                <field name="ei_state" invisible="1"/>
+                <button name="send_document_register" string="Send JSON" type="object" class="oe_highlight" attrs="{'invisible': [('ei_state', '!=', 'to_send')]}"/>
+                <button name="query" string="Query" type="object" class="oe_highlight" attrs="{'invisible': [('ei_state', '!=', 'to_query')]}"/>
             </button>
             <button name="action_invoice_open" position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -62,8 +63,9 @@
             <button name="action_invoice_open" position="after">
                 <field name="ei_response_code" invisible="1"/>
                 <field name="ei_status_code" invisible="1"/>
-                <button name="send_message_register" string="Send JSON" type="object" class="oe_highlight" attrs="{'invisible': [('ei_response_code','=','1')]}"/>
-                <button name="query" string="Query" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('ei_status_code','=','4'), ('ei_response_code','!=','1')]}"/>
+                <field name="ei_state" invisible="1"/>
+                <button name="send_message_register" string="Send JSON" type="object" class="oe_highlight" attrs="{'invisible': [('ei_state', '!=', 'to_send')]}"/>
+                <button name="query" string="Query" type="object" class="oe_highlight" attrs="{'invisible': [('ei_state', '!=', 'to_query')]}"/>
             </button>
             <button name="action_invoice_open" position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -84,7 +86,7 @@
             <notebook position="inside">
                 <page string="Electronic Invoice">
                     <field name="fname_xml_supplier_approval" invisible="1" />
-                    <field name="xml_supplier_approval" filename="fname_xml_supplier_approval" attrs="{'invisible':[('doc_type','=', '01')]}" />
+                    <field name="xml_supplier_approval" filename="fname_xml_supplier_approval" attrs="{'invisible':[('doc_type', '=', '01')]}" />
                     <button name="load_xml_data" type="object" string="Load XML data" colspan="2" attrs="{'invisible':['|', ('doc_type','=', '01'), ('state','!=', 'draft')]}" />
                     <group>
                         <field name="sequence"/>
