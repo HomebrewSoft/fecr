@@ -352,7 +352,7 @@ class ElectronicInvoice(models.AbstractModel):
         if not partner_id:
             raise ValidationError(_('The partner with VAT {} does not exists').format(partner_vat))
         self.partner_id = partner_id
-        self._get_lines_from_invoice(invoice)
+        # TODO self._get_lines_from_invoice(invoice)
 
     def _get_lines_from_invoice(self, invoice):
         self.invoice_line_ids.unlink()
@@ -388,12 +388,12 @@ class ElectronicInvoice(models.AbstractModel):
                 'FechaEmisionDoc': datetime.strftime(fields.Datetime.context_timestamp(self, self.emission_date), '%Y-%m-%dT%H:%M:%S'),
                 # 'Mensaje': 1,
                 # 'DetalleMensaje': '',
-                'MontoTotalImpuesto': 2473.45133,  # zxc
+                'MontoTotalImpuesto': self.amount_tax,
                 'CodigoActividad': self.activity_id.code,
                 'CondicionImpuesto': '01',  # zxc
                 'MontoTotalImpuestoAcreditar': 0,  # zxc
                 'MontoTotalDeGastoAplicable': 0,  # zxc
-                'TotalFactura': 21500.00000,  # zxc
+                'TotalFactura': self.amount_total,
                 'NumeroCedulaReceptor': self.company_id.vat,
             }
         }, self.company_id.ei_service_message_register)

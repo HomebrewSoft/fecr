@@ -1,7 +1,7 @@
 # coding: utf-8
 {
     'name': 'Costa Rica Electronic Invoice',
-    'version': '1.3.0',
+    'version': '1.4.0',
     'author': 'Navarro Moisés',
     'website': 'https://github.com/lfelipecr/xalachi-fecr',
     'category': 'Localization',
