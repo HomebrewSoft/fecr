@@ -16,9 +16,9 @@
                 <attribute name="invisible">1</attribute>
             </button>
             <field name="partner_id" position="after">
-                <field name="doc_type"/>
-                <field name="sale_condition"/>
-                <field name="payment_method"/>
+                <field name="doc_type" domain="[('code', 'in', ['01', '02', '03', '04'])]"/>
+                <field name="sale_condition" required="1"/>
+                <field name="payment_method" required="1"/>
                 <field name="available_activity_ids" invisible="1"/>
                 <field name="activity_id" domain="[('id', 'in', available_activity_ids)]"/>
             </field>
@@ -71,11 +71,7 @@
                 <attribute name="invisible">1</attribute>
             </button>
             <field name="partner_id" position="after">
-                <field name="doc_type"/>
-                <field name="sale_condition"/>
-                <field name="payment_method"/>
-                <field name="available_activity_ids" invisible="1"/>
-                <field name="activity_id" domain="[('id', 'in', available_activity_ids)]"/>
+                <field name="doc_type" domain="[('code', 'in', ['05', '06', '07', '08'])]"/>
             </field>
             <field name="date_invoice" position="after">
                 <field name="emission_date"/>
@@ -85,9 +81,14 @@
             </field>
             <notebook position="inside">
                 <page string="Electronic Invoice">
-                    <field name="fname_xml_supplier_approval" invisible="1" />
-                    <field name="xml_supplier_approval" filename="fname_xml_supplier_approval" attrs="{'invisible':[('doc_type', '=', '01')]}" />
-                    <button name="load_xml_data" type="object" string="Load XML data" colspan="2" attrs="{'invisible':['|', ('doc_type','=', '01'), ('state','!=', 'draft')]}" />
+                    <field name="fname_xml_supplier_approval" invisible="1"/>
+                    <field name="xml_supplier_approval" filename="fname_xml_supplier_approval"/>
+                    <button name="load_xml_data" type="object" string="Load XML data" colspan="2" attrs="{'invisible':[('state','!=', 'draft')]}"/>
+                    <group>
+                        <field name="sale_condition" readonly="1"/>
+                        <field name="payment_method" readonly="1"/>
+                        <field name="activity_id" readonly="1"/>
+                    </group>
                     <group>
                         <field name="sequence"/>
                         <field name="key"/>

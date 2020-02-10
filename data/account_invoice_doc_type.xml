@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="doc_type_01" model="account.invoice.doc_type">
+        <field name="code">01</field>
+        <field name="desc">Factura Electrónica</field>
+    </record>
+    <record id="doc_type_02" model="account.invoice.doc_type">
+        <field name="code">02</field>
+        <field name="desc">Nota de Débito</field>
+    </record>
+    <record id="doc_type_03" model="account.invoice.doc_type">
+        <field name="code">03</field>
+        <field name="desc">Nota de Crédito</field>
+    </record>
+    <record id="doc_type_04" model="account.invoice.doc_type">
+        <field name="code">04</field>
+        <field name="desc">Tiquete Electrónico</field>
+    </record>
+    <record id="doc_type_05" model="account.invoice.doc_type">
+        <field name="code">05</field>
+        <field name="desc">Confirmacion comprobante electronico</field>
+    </record>
+    <record id="doc_type_06" model="account.invoice.doc_type">
+        <field name="code">06</field>
+        <field name="desc">Confirmacion parcial comprobante electronico</field>
+    </record>
+    <record id="doc_type_07" model="account.invoice.doc_type">
+        <field name="code">07</field>
+        <field name="desc">Rechazo comprobante electronico</field>
+    </record>
+    <record id="doc_type_08" model="account.invoice.doc_type">
+        <field name="code">08</field>
+        <field name="desc">Factura Electrónica de Compra</field>
+    </record>
+    <record id="doc_type_09" model="account.invoice.doc_type">
+        <field name="code">09</field>
+        <field name="desc">Factura Electrónica de Exportación</field>
+    </record>
+</odoo>

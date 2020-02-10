@@ -22,19 +22,9 @@ class ElectronicInvoice(models.AbstractModel):
     _description = 'Electronic Invoice'
 
     # Header
-    doc_type = fields.Selection(
+    doc_type = fields.Many2one(
+        comodel_name='account.invoice.doc_type',
         required=True,
-        selection=[
-            ('01', 'Factura Electrónica'),
-            ('02', 'Nota de Débito'),
-            ('03', 'Nota de Crédito'),
-            ('04', 'Tiquete Electrónico'),
-            ('05', 'Confirmacion comprobante electronico'),
-            ('06', 'Confirmacion parcial comprobante electronico'),
-            ('07', 'Rechazo comprobante electronico'),
-            ('08', 'Factura Electrónica de Compra'),
-            ('09', 'Factura Electrónica de Exportación'),
-        ]
     )
     activity_id = fields.Many2one(
         comodel_name='res.company.activity',
@@ -45,7 +35,6 @@ class ElectronicInvoice(models.AbstractModel):
         readonly=True,
     )
     sale_condition = fields.Selection(
-        required=True,
         selection=[
             ('01', 'Contado'),
             ('02', 'Crédito'),
@@ -57,7 +46,6 @@ class ElectronicInvoice(models.AbstractModel):
         ]
     )
     payment_method = fields.Selection(
-        required=True,
         selection=[
             ('01', 'Efectivo'),
             ('02', 'Tarjeta'),
@@ -136,6 +124,7 @@ class ElectronicInvoice(models.AbstractModel):
         attachment=True,
         copy=False,
         string='XML Supplier',
+
     )
     ei_state = fields.Selection(
         [
@@ -167,7 +156,7 @@ class ElectronicInvoice(models.AbstractModel):
 
     def _get_header(self):
         header = {
-            'TipoDocumento': self.doc_type,
+            'TipoDocumento': self.doc_type.code,
             # 'SecuenciaControlada': 0,
             # 'NumeroConsecutivo': 0,
             # 'Clave': 0,
@@ -291,7 +280,10 @@ class ElectronicInvoice(models.AbstractModel):
         }
         _logger.info('Making query to sequence: {} key: {}'.format(self.sequence, self.key))
         conn.request('POST', self.company_id.ei_service_document_query, '', headers)
-        response = json.loads(conn.getresponse().read().decode('utf-8'))
+        try:
+            response = json.loads(conn.getresponse().read().decode('utf-8'))
+        except json.JSONDecodeError:
+            raise ValidationError(_('The API does not respond.'))
         self.ei_response_code = response['CodigoRespuesta']
         self.ei_message = response['Mensaje']
         self.ei_date = response['Fecha']
@@ -329,9 +321,13 @@ class ElectronicInvoice(models.AbstractModel):
             return invoice
 
     def load_xml_data(self):
+        if not self.xml_supplier_approval:
+            return
         invoice = self._get_invoice_from_xml()
 
         self.key = get(invoice, 'Clave')
+        self.sale_condition = get(invoice, 'CondicionVenta')
+        self.payment_method = get(invoice, 'MedioPago')
         self.activity_id = self.env['res.company.activity'].search([('code', '=', get(invoice, 'CodigoActividad'))])
         emission_date = get(invoice, 'FechaEmision')
         date_formats = [
@@ -363,6 +359,8 @@ class ElectronicInvoice(models.AbstractModel):
         if not partner_id:
             raise ValidationError(_('The partner with VAT {} does not exists').format(partner_vat))
         self.partner_id = partner_id
+        if self.sale_condition == '01':
+            self.payment_term_id = self.env.ref('account.account_payment_term_immediate')[0].id  # TODO _onchange_partner_id overwrite this
         # TODO self._get_lines_from_invoice(invoice)
 
     def _get_lines_from_invoice(self, invoice):
@@ -387,7 +385,7 @@ class ElectronicInvoice(models.AbstractModel):
     def send_message_register(self):
         self._send_json({
             'DocMensajeReceptor': {
-                'TipoDocumento': self.doc_type,
+                'TipoDocumento': self.doc_type.code,
                 'SecuenciaControlada': 1,
                 # 'NumeroConsecutivoReceptor': '',
                 # 'SecienciaDocumento': 0,

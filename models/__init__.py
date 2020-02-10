@@ -1,9 +1,10 @@
 # coding: utf-8
 
+from . import code_name
 from . import uom_uom
 from . import res_company
+from . import account_invoice_doc_type
 from . import electronic_invoice
-from . import basic_code_desc_model
 from . import account_invoice
 from . import account_tax
 from . import res_company_activity

@@ -6,4 +6,5 @@ Costa Rica Electronic Invoice
 TODOS
 -----
 * [ ] Auto enable UoM's
-* [ ] Scheduled Task to Query
+* [x] Scheduled Task to Query
+* [ ] Currency symbol at the left
