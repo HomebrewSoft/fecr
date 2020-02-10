@@ -385,7 +385,6 @@ class ElectronicInvoice(models.AbstractModel):
         self._compute_amount()
 
     def send_message_register(self):
-        self.emission_date = date_time_obj - local.utcoffset(fields.Datetime.now())
         self._send_json({
             'DocMensajeReceptor': {
                 'TipoDocumento': self.doc_type,
